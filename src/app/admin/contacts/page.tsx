@@ -1,9 +1,16 @@
-import { Search, MoreVertical } from 'lucide-react';
+import { Search } from 'lucide-react';
 import prisma from '@/lib/prisma';
+import ContactActions from '@/components/admin/ContactActions';
+
+import { getCurrentUser } from '@/actions/auth';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ContactsPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+
   const contacts = await prisma.contact.findMany({
     orderBy: { createdAt: 'desc' }
   });
@@ -56,11 +63,11 @@ export default async function ContactsPage() {
                       contact.status === 'RESOLVED' ? 'bg-emerald-50 text-emerald-600' :
                       'bg-slate-50 text-slate-600'
                     }`}>
-                      {contact.status === 'NEW' ? 'Mới' : contact.status}
+                      {contact.status === 'NEW' ? 'Mới' : contact.status === 'IN_PROGRESS' ? 'Đang xử lý' : 'Đã giải quyết'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
-                    <button className="text-slate-400 hover:text-slate-600"><MoreVertical className="h-5 w-5" /></button>
+                    <ContactActions id={contact.id} currentStatus={contact.status} />
                   </td>
                 </tr>
               ))

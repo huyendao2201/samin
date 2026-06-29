@@ -1,17 +1,30 @@
 import Link from 'next/link';
-import { Building2, LayoutDashboard, FileText, Wrench, Briefcase, Users, LogOut, Settings as SettingsIcon } from 'lucide-react';
+import { Building2, LayoutDashboard, FileText, Wrench, Briefcase, Users, LogOut, Settings as SettingsIcon, UserCog } from 'lucide-react';
+import { getCurrentUser } from '@/actions/auth';
+import { redirect } from 'next/navigation';
 
 const sidebarLinks = [
-  { name: 'Tổng quan', href: '/admin', icon: LayoutDashboard },
-  { name: 'Liên hệ khách hàng', href: '/admin/contacts', icon: Users },
-  { name: 'Quản lý Dịch vụ', href: '/admin/services', icon: Wrench },
-  { name: 'Quản lý Sản phẩm', href: '/admin/products', icon: Building2 },
-  { name: 'Tin tức & Kiến thức', href: '/admin/posts', icon: FileText },
-  { name: 'Tuyển dụng', href: '/admin/jobs', icon: Briefcase },
-  { name: 'Cài đặt Website', href: '/admin/settings', icon: SettingsIcon },
+  { name: 'Tổng quan', href: '/admin', icon: LayoutDashboard, roles: ['ADMIN', 'EDITOR'] },
+  { name: 'Liên hệ khách hàng', href: '/admin/contacts', icon: Users, roles: ['ADMIN', 'EDITOR'] },
+  { name: 'Quản lý Dịch vụ', href: '/admin/services', icon: Wrench, roles: ['ADMIN', 'EDITOR'] },
+  { name: 'Quản lý Sản phẩm', href: '/admin/products', icon: Building2, roles: ['ADMIN', 'EDITOR'] },
+  { name: 'Tin tức & Kiến thức', href: '/admin/posts', icon: FileText, roles: ['ADMIN', 'EDITOR'] },
+  { name: 'Tuyển dụng', href: '/admin/jobs', icon: Briefcase, roles: ['ADMIN', 'EDITOR'] },
+  { name: 'Cài đặt Website', href: '/admin/settings', icon: SettingsIcon, roles: ['ADMIN', 'EDITOR'] },
+  { name: 'Quản lý Tài khoản', href: '/admin/accounts', icon: UserCog, roles: ['ADMIN'] },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default async function AdminLayout({ children }: { children: React.ReactNode }) {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect('/login');
+  }
+
+  const roleName = user.role === 'ADMIN' ? 'Administrator' : 'Quản trị viên';
+  const roleDesc = user.role === 'ADMIN' ? 'Quản trị viên tối cao' : 'Quản lý nội dung';
+
+  const visibleLinks = sidebarLinks.filter(link => link.roles.includes(user.role));
+
   return (
     <div className="flex min-h-screen w-full bg-slate-50 text-slate-900 font-sans">
       {/* Sidebar */}
@@ -23,7 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <span className="font-bold text-lg text-slate-900 tracking-tight">SAMIN Admin</span>
         </div>
         <div className="flex-1 overflow-y-auto py-6 px-3 space-y-1.5">
-          {sidebarLinks.map((item) => (
+          {visibleLinks.map((item) => (
             <Link
               key={item.name}
               href={item.href}
@@ -54,11 +67,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <h2 className="text-xl font-bold text-slate-800">Bảng điều khiển quản trị</h2>
           <div className="flex items-center gap-4">
             <div className="text-right">
-              <p className="text-sm font-bold text-slate-900">Administrator</p>
-              <p className="text-xs text-slate-500">Quản trị viên tối cao</p>
+              <p className="text-sm font-bold text-slate-900">{user.name || roleName}</p>
+              <p className="text-xs text-slate-500">{roleDesc}</p>
             </div>
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
-              A
+              {user.name ? user.name.charAt(0).toUpperCase() : (user.role === 'ADMIN' ? 'A' : 'E')}
             </div>
           </div>
         </header>

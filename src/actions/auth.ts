@@ -39,3 +39,16 @@ export async function logout() {
   cookieStore.delete('admin_session');
   redirect('/login');
 }
+
+export async function getCurrentUser() {
+  const cookieStore = await cookies();
+  const userId = cookieStore.get('admin_session')?.value;
+  
+  if (!userId) {
+    return null;
+  }
+  
+  return prisma.user.findUnique({
+    where: { id: userId }
+  });
+}

@@ -43,7 +43,6 @@ export default function LoginPage() {
                   name="email"
                   type="email"
                   required
-                  defaultValue="admin@samin.vn"
                   className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
                   placeholder="admin@samin.vn"
                 />
@@ -59,7 +58,6 @@ export default function LoginPage() {
                   name="password"
                   type="password"
                   required
-                  defaultValue="admin"
                   className="block w-full pl-10 pr-3 py-3 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all"
                   placeholder="••••••••"
                 />

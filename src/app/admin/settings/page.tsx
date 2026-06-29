@@ -1,9 +1,14 @@
 import prisma from '@/lib/prisma';
 import SettingsForm from '@/components/admin/SettingsForm';
+import { getCurrentUser } from '@/actions/auth';
+import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
 export default async function SettingsPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect('/login');
+
   const dbSettings = await prisma.setting.findMany();
   
   // Chuyển array thành object để dễ truyền vào form
@@ -11,6 +16,7 @@ export default async function SettingsPage() {
     acc[curr.key] = curr.value;
     return acc;
   }, {} as Record<string, string>);
+
 
   return (
     <div className="space-y-6">

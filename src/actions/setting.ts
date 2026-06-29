@@ -2,8 +2,14 @@
 
 import prisma from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { getCurrentUser } from '@/actions/auth';
 
 export async function saveSettings(formData: FormData) {
+  const user = await getCurrentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
   const keys = ['site_name', 'site_logo', 'contact_phone', 'contact_email', 'contact_address', 'facebook_url', 'zalo_url', 'about_content'];
   
   for (const key of keys) {
