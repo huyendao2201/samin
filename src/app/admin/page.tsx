@@ -79,8 +79,12 @@ export default async function AdminDashboard() {
                   <td className="px-6 py-4 truncate max-w-[150px]">{c.service}</td>
                   <td className="px-6 py-4">{new Date(c.createdAt).toLocaleDateString('vi-VN')}</td>
                   <td className="px-6 py-4">
-                    <span className={`px-2.5 py-1 rounded-md text-xs font-medium ${c.status === 'NEW' ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-600'}`}>
-                      {c.status === 'NEW' ? 'Mới' : c.status}
+                    <span className={`px-2.5 py-1 rounded-md text-xs font-medium ${
+                      c.status === 'NEW' ? 'bg-amber-50 text-amber-600' :
+                      c.status === 'RESOLVED' ? 'bg-emerald-50 text-emerald-600' :
+                      'bg-slate-50 text-slate-600'
+                    }`}>
+                      {c.status === 'NEW' ? 'Mới' : c.status === 'IN_PROGRESS' ? 'Đang xử lý' : 'Đã giải quyết'}
                     </span>
                   </td>
                 </tr>
